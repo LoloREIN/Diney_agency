@@ -145,16 +145,20 @@ if (texto):
 
 st.markdown("<h2 style='text-align: center; color: white;'>Multi-class Classification</h2>", unsafe_allow_html=True)
 
+
+
+
 with st.sidebar:
-    api_key_file = st.file_uploader("Sube aquí tu key",type=["txt"])
+    api_key_file = st.file_uploader("Upload your key",type=["txt"])
     if api_key_file is not None:
         key = str(api_key_file.readline().decode("utf-8"))
         os.environ["OPENAI_API_KEY"]=key
         llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
 
-        query = st.text_input("Realiza pregunta que tengas de los parques de Disney")
+        st.write("We know disney can be challenging")
+        query = st.text_input("So ask us anything :)")
         promt = '''
-        Eres un asistente de viajes que amigablemente responderá las preguntas de los interesados en viajar a disney y conocer de sus parques. Incluye detalles sobre atracciones, eventos especiales, estrategias para visitar los parques, novedades y actualizaciones en los parques de Disney alrededor del mundo. Evita incluir información que no esté directamente relacionada con Disney o sus parques temáticos. Y contesta las pregunta
+        You are a travel assistant who will friendly answer questions from those interested in traveling to Disney and learning about its parks. Includes details on attractions, special events, park visiting strategies, news and updates at Disney parks around the world. Avoid including information that is not directly related to Disney or its theme parks. And finish all of your answers with "and remember Disneyland is where the dreams come true."
                 '''
 
         if st.button("generate output"):
