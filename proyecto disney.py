@@ -12,8 +12,6 @@ import pandas as pd # data processing
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from google.colab import drive
-drive.mount('/content/gdrive')
 
 import tensorflow as tfm
 if tfm.test.gpu_device_name():
@@ -25,7 +23,7 @@ encodings = ['utf-8', 'ISO-8859-1', 'latin1']
 
 for encoding in encodings:
     try:
-        df = pd.read_csv('/content/gdrive/MyDrive/Colab Notebooks/NLP/DisneylandReviews.csv', encoding=encoding)
+        df = pd.read_csv('DisneylandReviews.csv', encoding=encoding)
         print("File read successfully with encoding:", encoding)
         break
     except UnicodeDecodeError:
@@ -256,9 +254,7 @@ predict(positive)
 import joblib
 joblib.dump(model_cnn, 'modelo_cnn_chido.pkl')
 
-from google.colab import files
-# Descargar el archivo
-files.download('modelo_cnn_chido.pkl')
+
 
 # df = df.reset_index(drop=True)
 

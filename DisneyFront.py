@@ -14,7 +14,25 @@ from PIL import Image
 import os
 from langchain.chat_models import ChatOpenAI
 from langchain.schema.messages import HumanMessage, SystemMessage
+import numpy as np
 
+with st.sidebar:
+    api_key_file = st.file_uploader("Upload your key",type=["txt"])
+    if api_key_file is not None:
+        key = str(api_key_file.readline().decode("utf-8"))
+        os.environ["OPENAI_API_KEY"]=key
+        llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
+
+        st.write("We know disney can be challenging")
+        query = st.text_input("So ask us anything :)")
+        promt = '''
+        You are a travel assistant who will friendly answer questions from those interested in traveling to Disney and learning about its parks. Includes details on attractions, special events, park visiting strategies, news and updates at Disney parks around the world. Avoid including information that is not directly related to Disney or its theme parks. And finish all of your answers with "and remember Disneyland is where the dreams come true."
+                '''
+
+        if st.button("generate output"):
+            response = llm.invoke([SystemMessage(content=promt),HumanMessage(content=query)])
+            st.write(f'##### {response.content}')
+        llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
 
 #Importamos DataFrame
 df = pd.read_csv(r'df_Binario.csv', encoding='ISO-8859-1')
@@ -152,8 +170,6 @@ Trigram_Neg = Image.open(r'Trigramas_Negative.png')
 bigram_Neu = Image.open(r'Bigramas_Neutral.png')
 Trigram_Neu = Image.open(r'Trigramas_Neutral.png')
 
-st.markdown("<h2 style='text-align: center; color: white;'>Multi-class Classification</h2>", unsafe_allow_html=True)
-
 col3,col4 = st.columns(2)
 col3.write('### Bigrams')
 col3.write('### \n ')
@@ -171,30 +187,54 @@ col4.image(Trigram_P)
 col4.image(Trigram_Neg)
 col4.image(Trigram_Neu)
 
-st.write('### Say if a review is good or bad')
-texto = st.text_input("Enter a review:")
+st.write('### Say if a review is positive, neutral or negative')
+texto_2 = st.text_input("Enter a client review:")
 #AQUI ESCRIBE EL METODO PARA PREDECIR
-if (texto):
+import pickle
+with open('modelo_cnn_chido.pkl', 'rb') as file:
+    model_2 = pickle.load(file)
+
+embeddings = {}
+
+with open('/Users/lorenzoreinoso/Documents/Files/glove.6B.300d.txt', encoding="utf-8") as f:
+    for line in f:
+        values = line.split()
+        word = values[0]
+        vectors = np.asarray(values[1:])
+        embeddings[word] = vectors
+
+def vectorize(text):
+    vector_size = 300
+    texto = text.lower()
+    texto = re.sub(r'[^a-zA-Z0-9\s]', '',texto)
+    texto = word_tokenize(texto)
+    texto = [palabra for palabra in texto if palabra not in stop_words_en]
+    texto = [lemmatizer.lemmatize(palabra)for palabra in texto]
+    vector = np.zeros(vector_size)
+    for palabra in texto:
+        if palabra in embeddings:
+            vector = vector + embeddings[palabra].astype('float')
+        else:
+            print(f"No hay un embedding para la palabra {palabra}. Omitiendo...")
+    vector = vector.reshape(1, 300, 1)
+    return vector
+
+def predecir_sentimiento_R(texto):
+    texto_limpo = vectorize(texto)
+    prediccion = model_2.predict(texto_limpo)
+    return prediccion[0]
+
+predictionLR = predecir_sentimiento_R(texto_2)
+
+if (texto_2):
     with st.spinner('Esperate que ando chambeando...'):
-        st.write(f'This is a {predictionLR} review. According to CNN model')
+        st.write(f'This is a {texto_2} review. According to CNN model')
+        st.success(f'''
+    CATEGORY.             PROBABILITY
+    _____________________________________
+    Negative:             {predictionLR[0]}
+    Neutral:              {predictionLR[1]}
+    Positive:             {predictionLR[2]}
 
-
-with st.sidebar:
-    api_key_file = st.file_uploader("Upload your key",type=["txt"])
-    if api_key_file is not None:
-        key = str(api_key_file.readline().decode("utf-8"))
-        os.environ["OPENAI_API_KEY"]=key
-        llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
-
-        st.write("We know disney can be challenging")
-        query = st.text_input("So ask us anything :)")
-        promt = '''
-        You are a travel assistant who will friendly answer questions from those interested in traveling to Disney and learning about its parks. Includes details on attractions, special events, park visiting strategies, news and updates at Disney parks around the world. Avoid including information that is not directly related to Disney or its theme parks. And finish all of your answers with "and remember Disneyland is where the dreams come true."
-                '''
-
-        if st.button("generate output"):
-            response = llm.invoke([SystemMessage(content=promt),HumanMessage(content=query)])
-            st.write(f'##### {response.content}')
-        llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
-
-    
+  ''', icon="✅")
+        #st.success("Positive: 0.833"), icon="✅")
