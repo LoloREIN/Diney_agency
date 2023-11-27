@@ -145,7 +145,38 @@ if (texto):
 
 st.markdown("<h2 style='text-align: center; color: white;'>Multi-class Classification</h2>", unsafe_allow_html=True)
 
+bigram_P = Image.open(r'Bigramas_Positive.png')
+Trigram_P = Image.open(r'Trigramas_Positive.png')
+bigram_Neg = Image.open(r'Bigramas_Negative.png')
+Trigram_Neg = Image.open(r'Trigramas_Negative.png')
+bigram_Neu = Image.open(r'Bigramas_Neutral.png')
+Trigram_Neu = Image.open(r'Trigramas_Neutral.png')
 
+st.markdown("<h2 style='text-align: center; color: white;'>Multi-class Classification</h2>", unsafe_allow_html=True)
+
+col3,col4 = st.columns(2)
+col3.write('### Bigrams')
+col3.write('### \n ')
+
+# Organizar las imágenes en una fila en la primera columna
+col3.image(bigram_P)
+col3.image(bigram_Neg)
+col3.image(bigram_Neu)
+
+col4.write('### Trigrams')
+col4.write('### \n ')
+
+# Organizar las imágenes en una fila en la segunda columna
+col4.image(Trigram_P)
+col4.image(Trigram_Neg)
+col4.image(Trigram_Neu)
+
+st.write('### Say if a review is good or bad')
+texto = st.text_input("Enter a review:")
+#AQUI ESCRIBE EL METODO PARA PREDECIR
+if (texto):
+    with st.spinner('Esperate que ando chambeando...'):
+        st.write(f'This is a {predictionLR} review. According to CNN model')
 
 
 with st.sidebar:
