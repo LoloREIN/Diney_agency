@@ -11,6 +11,9 @@ import re
 import streamlit as st
 import pandas as pd
 from PIL import Image
+import os
+from langchain.chat_models import ChatOpenAI
+from langchain.schema.messages import HumanMessage, SystemMessage
 
 
 #Importamos DataFrame
@@ -135,9 +138,28 @@ predictionLR = predecir_sentimiento_R(texto)
 predictionSVC = modeloSVC.predict([texto])
 
 if (texto):
-     with st.spinner('Esperate que ando chambeando...'):
+    with st.spinner('Esperate que ando chambeando...'):
         st.write(f'This is a {predictionLR} review. According to Logistic Regresion model')
         st.write(f'This is a {predictionSVC[0]} review. According to SVC model')
 
 
 st.markdown("<h2 style='text-align: center; color: white;'>Multi-class Classification</h2>", unsafe_allow_html=True)
+
+with st.sidebar:
+    api_key_file = st.file_uploader("Sube aquí tu key",type=["txt"])
+    if api_key_file is not None:
+        key = str(api_key_file.readline().decode("utf-8"))
+        os.environ["OPENAI_API_KEY"]=key
+        llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
+
+        query = st.text_input("Realiza pregunta que tengas de los parques de Disney")
+        promt = '''
+        Eres un asistente de viajes que amigablemente responderá las preguntas de los interesados en viajar a disney y conocer de sus parques. Incluye detalles sobre atracciones, eventos especiales, estrategias para visitar los parques, novedades y actualizaciones en los parques de Disney alrededor del mundo. Evita incluir información que no esté directamente relacionada con Disney o sus parques temáticos. Y contesta las pregunta
+                '''
+
+        if st.button("generate output"):
+            response = llm.invoke([SystemMessage(content=promt),HumanMessage(content=query)])
+            st.write(f'##### {response.content}')
+        llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
+
+    
