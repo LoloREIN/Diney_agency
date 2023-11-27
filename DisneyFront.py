@@ -14,12 +14,12 @@ from PIL import Image
 
 
 #Importamos DataFrame
-df = pd.read_csv(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\df_Binario.csv', encoding='ISO-8859-1')
+df = pd.read_csv(r'df_Binario.csv', encoding='ISO-8859-1')
 
 #Importamos modelos de IA
-modeloSVC = joblib.load(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\ModeloSVC.joblib')
-modelRegresion = joblib.load(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\RegresionL3.joblib')
-tfidf = joblib.load(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\tfidf_vectorizer3.joblib')
+modeloSVC = joblib.load(r'ModeloSVC.joblib')
+modelRegresion = joblib.load(r'RegresionL3.joblib')
+tfidf = joblib.load(r'tfidf_vectorizer3.joblib')
 
 #Preprocesamiento de la información
 def limpiar(texto):
@@ -103,10 +103,10 @@ bar_sent = px.bar(
 # print(f'According to the Logistic Regression model, the review is: {predictionLR}')
 # print(f'According to the SVC model, the review is: {predictionSVC[0]}')
 
-bigram_Good = Image.open(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\Bigramas_Good_Binario.png')
-Trigram_Good = Image.open(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\Trigramas_Good_Binario.png')
-bigram_Bad = Image.open(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\Bigramas_Bad_Binario.png')
-Trigram_Bad = Image.open(r'D:\Usuarios\Ivan\Desktop\Disney\Diney_agency\Trigramas_Bad_Binario.png')
+bigram_Good = Image.open(r'Bigramas_Good_Binario.png')
+Trigram_Good = Image.open(r'Trigramas_Good_Binario.png')
+bigram_Bad = Image.open(r'Bigramas_Bad_Binario.png')
+Trigram_Bad = Image.open(r'Trigramas_Bad_Binario.png')
 
 st.markdown("<h1 style='text-align: center; color: white;'>Disneyland Adventure Agency</h1>", unsafe_allow_html=True)
 # st.write(df.head(5))
