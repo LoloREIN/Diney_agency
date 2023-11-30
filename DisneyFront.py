@@ -26,13 +26,13 @@ with st.sidebar:
         st.write("We know disney can be challenging")
         query = st.text_input("So ask us anything :)")
         promt = '''
-        You are a travel assistant who will friendly answer questions from those interested in traveling to Disney and learning about its parks. Includes details on attractions, special events, park visiting strategies, news and updates at Disney parks around the world. Avoid including information that is not directly related to Disney or its theme parks. And finish all of your answers with "and remember Disneyland is where the dreams come true."
+        You are a travel assistant who will friendly answer questions from those interested in traveling to Disney and learning about its parks. Includes details on attractions, special events, park visiting strategies, news and updates at Disney parks around the world. Avoid including information that is not directly related to Disney or its theme parks. You can only answer disney related questions, be family friendly, by all means avoid cursing or swearing and finish all of your answers with "and remember Disneyland is where the dreams come true!"
                 '''
 
         if st.button("generate output"):
             response = llm.invoke([SystemMessage(content=promt),HumanMessage(content=query)])
             st.write(f'##### {response.content}')
-        llm = ChatOpenAI(model_name = "gpt-3.5-turbo")
+        llm = ChatOpenAI(model_name = "gpt-4")
 
 #Importamos DataFrame
 df = pd.read_csv(r'df_Binario.csv', encoding='ISO-8859-1')
@@ -232,9 +232,9 @@ if (texto_2):
         st.success(f'''
     CATEGORY.             PROBABILITY
     _____________________________________
-    Negative:             {predictionLR[0]}
-    Neutral:              {predictionLR[1]}
-    Positive:             {predictionLR[2]}
+    Negative:             {round(float(predictionLR[0]),4)}\n
+    Neutral:              {round(float(predictionLR[1]),4)}\n
+    Positive:             {round(float(predictionLR[2]),4)}\n
 
   ''', icon="✅")
         #st.success("Positive: 0.833"), icon="✅")
